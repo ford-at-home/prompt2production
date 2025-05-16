@@ -1,0 +1,16 @@
+project_name: "iam-possible"
+technical_topic: "AWS Identity and Access Management"
+metaphor_world: "Nightclub security"
+narrator_style: "Samuel L. Jackson"
+scene_count: 18
+tone: "Cocky, cinematic, accurate"
+depth: "Explain clearly, but stay entertaining"
+voice_model: "ElevenLabs::sam-style"
+video_model: "Replicate::sora"
+deployment:
+  s3_bucket: "iam-possible"
+  max_requests: 1000
+  download_enabled: true
+render_targets:
+  voice_model: "ElevenLabs"
+  video_model: "Sora"

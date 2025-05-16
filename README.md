@@ -1,2 +1,1 @@
-# prompt2production
-End-to-end video short creator.
+# Top-level README for the entire prompt2production framework
