@@ -8,7 +8,6 @@ def synthesize_voice(text: str, config: dict) -> str:
 
     out_dir = Path(config.get("output_dir", "output"))
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_file = out_dir / "voiceover.mp3"
+    out_file = out_dir / "final_voiceover.mp3"
     out_file.write_text("synthetic audio")
     return str(out_file)
-

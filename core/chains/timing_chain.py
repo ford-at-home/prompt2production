@@ -1,15 +1,17 @@
-"""Timing estimation chain."""
+\"""Timing estimation chain."""
 
 from typing import List, Dict
 
+from core.utils.tokenizer import count_tokens
 
-def estimate_timing(script: List[str]) -> List[Dict[str, float]]:
-    """Return a simple timing matrix assuming ~2 words per second."""
+
+def estimate_timing(script: List[str], wpm: int = 120) -> List[Dict[str, float]]:
+    """Return a timing matrix using words-per-minute heuristic."""
 
     timings = []
     for line in script:
-        seconds = max(1, len(line.split()) / 2)
+        word_count = count_tokens(line)
+        seconds = max(1, (word_count / wpm) * 60)
         timings.append({"line": line, "seconds": seconds})
 
     return timings
-

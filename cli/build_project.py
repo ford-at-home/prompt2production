@@ -1,6 +1,8 @@
 """CLI entry point for running a project through the pipeline."""
 
 import argparse
+from pathlib import Path
+
 try:
     import yaml
 except ModuleNotFoundError:  # pragma: no cover - optional dependency
@@ -23,16 +25,30 @@ def build_project(config_path: str) -> None:
     with open(config_path) as f:
         config = yaml.safe_load(f)
 
+    output_dir = Path(config.get("output_dir", "output"))
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     script = generate_script(config)
-    storyboard = generate_storyboard(script)
-    timings = estimate_timing(script)
+    storyboard = generate_storyboard(script, config)
+    timings = estimate_timing(script, config.get("words_per_minute", 120))
+
+    (output_dir / "SCRIPT.md").write_text("\n".join(script))
+    (output_dir / "STORYBOARD.md").write_text("\n".join(storyboard))
+    timing_lines = [f"{t['seconds']:.2f}s: {t['line']}" for t in timings]
+    (output_dir / "TIMED_SCRIPT.md").write_text("\n".join(timing_lines))
+
     voice_path = build_voiceover(script, config)
     video_path = render_video(storyboard, voice_path, config)
+
+    (output_dir / "transcript.txt").write_text("\n".join(script))
+    (output_dir / "render_notes.md").write_text(
+        f"Video model: {config.get('video_model', 'unknown')}\n"
+    )
 
     deploy(voice_path, config)
     deploy(video_path, config)
 
-    print("Pipeline complete. Artifacts generated in", config.get("output_dir", "output"))
+    print("Pipeline complete. Artifacts generated in", output_dir)
 
 
 def main() -> None:
@@ -45,4 +61,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -7,18 +7,33 @@ can be demonstrated without external services.
 """
 
 from typing import List, Dict
+from pathlib import Path
+
+from jinja2 import Template
+
+from core.services.bedrock_nova import run_prompt
 
 
 def generate_script(config: Dict) -> List[str]:
-    """Return a dummy script for the requested scene count."""
+    """Return a generated script for the requested scene count using a template and LLM."""
 
     scene_count = int(config.get("scene_count", 3))
-    project_name = config.get("project_name", "demo")
 
-    script = [
-        f"Scene {i + 1}: Placeholder narration for {project_name}."
-        for i in range(scene_count)
-    ]
+    template_path = Path(__file__).resolve().parent.parent / "templates" / "vo_prompt.jinja"
+    template = Template(template_path.read_text())
+
+    context = {
+        "technical_topic": config.get("technical_topic", "demo"),
+        "metaphor_world": config.get("metaphor_world", "demo"),
+        "narrator_style": config.get("narrator_style", "plain"),
+        "tone": config.get("tone", "neutral"),
+        "scene_count": scene_count,
+    }
+
+    script = []
+    for i in range(scene_count):
+        context["index"] = i + 1
+        prompt = template.render(**context)
+        script.append(run_prompt(prompt))
 
     return script
-
