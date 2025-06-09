@@ -50,6 +50,7 @@ assets are uploaded to a rate-limited S3 bucket.
    make build PROJECT=iam-possible
    python -m cli.build_project path/to/PROMPT_INPUTS.yaml
    ```
+   
 3. `scene_builder` uses an LLM to draft each scene's narration.
 4. `storyboard_gen` converts narration into visual prompts.
 5. `timing_chain` estimates how long each line will take.
