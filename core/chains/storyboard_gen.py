@@ -2,9 +2,16 @@
 
 from typing import List
 
+from core.services.bedrock_nova import run_prompt
+
 
 def generate_storyboard(script: List[str]) -> List[str]:
-    """Create a simple visual description for each line of script."""
+    """Generate visual prompts for each line using Bedrock/Nova."""
 
-    return [f"Visual: {line}" for line in script]
+    prompts = []
+    for line in script:
+        prompt = f"Create a vivid shot description for: {line}"
+        prompts.append(run_prompt(prompt))
+
+    return prompts
 

@@ -43,3 +43,17 @@ assets are uploaded to a rate-limited S3 bucket.
 
 This repository contains lightweight stubs for each step so you can see how the
 pieces fit together before plugging in real API keys and logic.
+
+## Configuration
+
+The pipeline expects a few environment variables so it can connect to external
+services:
+
+- ``ELEVENLABS_API_KEY`` – used for voice synthesis.
+- ``REPLICATE_API_TOKEN`` – required for video generation with Replicate.
+
+By default the video step calls the ``minimax/video-01`` model on Replicate. If
+the ``replicate`` package is not installed or the API call fails, a placeholder
+file is created so you can test the rest of the pipeline offline. Text-to-text
+prompts use AWS Bedrock's Nova model, which reads credentials from your
+``~/.aws/credentials`` file.
