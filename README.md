@@ -30,8 +30,10 @@ The `projects/iam-possible` folder shows a complete run of the pipeline. It pres
 ## Pipeline Overview
 
 See [EXPLAINER.md](EXPLAINER.md) for a full walkthrough of how the pipeline works.
+
 This repository contains lightweight stubs for each step so you can see how the
 pieces fit together before plugging in real API keys and logic.
+
 The `projects/iam-possible` folder shows a complete run of the pipeline. It
 presents AWS Identity and Access Management as a Tarantino-style nightclub
 heist narrated by a cocky hacker with Samuel L. Jackson flair. Running this
