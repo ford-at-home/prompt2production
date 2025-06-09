@@ -15,7 +15,7 @@ from core.services.bedrock_nova import run_prompt
 
 
 def generate_script(config: Dict) -> List[str]:
-    """Return a dummy script for the requested scene count."""
+    """Return a generated script for the requested scene count using a template and LLM."""
 
     scene_count = int(config.get("scene_count", 3))
 

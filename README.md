@@ -31,11 +31,21 @@ The `projects/iam-possible` folder shows a complete run of the pipeline. It pres
 
 See [EXPLAINER.md](EXPLAINER.md) for a full walkthrough of how the pipeline works.
 
+The `projects/iam-possible` folder shows a complete run of the pipeline. It
+presents AWS Identity and Access Management as a Tarantino-style nightclub
+heist narrated by a cocky hacker with Samuel L. Jackson flair. Running this
+project generates a script, storyboard, and timing matrix, then renders a final
+voiceover and video using services like ElevenLabs and Sora. All produced
+assets are uploaded to a rate-limited S3 bucket.
+
+## Pipeline Overview
+
 1. **Define your project** in a YAML file (see `projects/iam-possible/PROMPT_INPUTS.yaml`).
 2. **Run the pipeline**:
 
    ```bash
    make build PROJECT=iam-possible
+   python -m cli.build_project path/to/PROMPT_INPUTS.yaml
    ```
 3. `scene_builder` uses an LLM to draft each scene's narration.
 4. `storyboard_gen` converts narration into visual prompts.
@@ -54,3 +64,5 @@ The pipeline expects a few environment variables so it can connect to external s
 - `REPLICATE_API_TOKEN` – required for video generation with Replicate.
 
 By default the video step calls the `minimax/video-01` model on Replicate. If the `replicate` package is not installed or the API call fails, a placeholder file is created so you can test the rest of the pipeline offline. Text-to-text prompts use AWS Bedrock's Nova model, which reads credentials from your `~/.aws/credentials` file.
+This repository contains lightweight stubs for each step so you can see how the
+pieces fit together before plugging in real API keys and logic.

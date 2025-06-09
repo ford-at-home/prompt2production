@@ -1,9 +1,9 @@
 """Video generation wrapper.
 
 This module optionally integrates with Replicate's API to render a video using
- the ``minimax/video-01`` model. If the ``replicate`` package is not available
- or the API call fails, a placeholder file is written so the rest of the
- pipeline can run without network access.
+the ``minimax/video-01`` model. If the ``replicate`` package is not available
+or the API call fails, a placeholder file is written so the rest of the
+pipeline can run without network access.
 """
 
 from pathlib import Path

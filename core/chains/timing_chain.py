@@ -1,4 +1,4 @@
-"""Timing estimation chain."""
+\"""Timing estimation chain."""
 
 from typing import List, Dict
 
