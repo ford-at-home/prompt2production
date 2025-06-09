@@ -15,4 +15,3 @@ def estimate_timing(script: List[str], wpm: int = 120) -> List[Dict[str, float]]
         timings.append({"line": line, "seconds": seconds})
 
     return timings
-

@@ -25,4 +25,3 @@ def generate_storyboard(script: List[str], config: Dict) -> List[str]:
         prompts.append(run_prompt(prompt))
 
     return prompts
-

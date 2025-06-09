@@ -37,4 +37,3 @@ def generate_script(config: Dict) -> List[str]:
         script.append(run_prompt(prompt))
 
     return script
-

@@ -1,12 +1,13 @@
 """CLI entry point for running a project through the pipeline."""
 
 import argparse
+from pathlib import Path
+
 try:
     import yaml
 except ModuleNotFoundError:  # pragma: no cover - optional dependency
     yaml = None
 
-from pathlib import Path
 from core.chains.scene_builder import generate_script
 from core.chains.storyboard_gen import generate_storyboard
 from core.chains.timing_chain import estimate_timing
@@ -60,4 +61,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
