@@ -1,1 +1,8 @@
-# Utility to count tokens or estimate speech time for narration
+"""Utility helpers for tokenization."""
+
+
+def count_tokens(text: str) -> int:
+    """Return a naive token count."""
+
+    return len(text.split())
+
