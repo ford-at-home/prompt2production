@@ -9,7 +9,7 @@ can be demonstrated without external services.
 from typing import List, Dict
 from pathlib import Path
 
-from jinja2 import Template
+from core.utils.template_renderer import render_template
 
 from core.services.bedrock_nova import run_prompt
 
@@ -20,7 +20,6 @@ def generate_script(config: Dict) -> List[str]:
     scene_count = int(config.get("scene_count", 3))
 
     template_path = Path(__file__).resolve().parent.parent / "templates" / "vo_prompt.jinja"
-    template = Template(template_path.read_text())
 
     context = {
         "technical_topic": config.get("technical_topic", "demo"),
@@ -33,7 +32,7 @@ def generate_script(config: Dict) -> List[str]:
     script = []
     for i in range(scene_count):
         context["index"] = i + 1
-        prompt = template.render(**context)
+        prompt = render_template(template_path, context)
         script.append(run_prompt(prompt))
 
     return script

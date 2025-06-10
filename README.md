@@ -36,6 +36,13 @@ three playful scenes explaining the workflow. Run it with:
 make build PROJECT=quick-demo
 ```
 
+## Running the Pipeline
+
+1. Copy `env.example` to `.env` and populate your API keys.
+2. Select a project directory under `projects/`.
+3. Execute the build using `make build PROJECT=<name>`.
+4. Generated artifacts appear in `output/` within the project.
+
 
 ## Pipeline Overview
 
@@ -69,3 +76,11 @@ Copy `env.example` to `.env` and provide your credentials.
 By default the video step calls the `minimax/video-01` model on Replicate. If the `replicate` package is not installed or the API call fails, a placeholder file is created so you can test the rest of the pipeline offline. Text-to-text prompts use AWS Bedrock's Nova model, which reads credentials from your `~/.aws/credentials` file.
 This repository contains lightweight stubs for each step so you can see how the
 pieces fit together before plugging in real API keys and logic.
+
+## Under the Hood
+
+The CLI lives in `cli/build_project.py`. Each stage of the pipeline is
+implemented as a small module under `core/chains` or `core/services`. Prompt
+templates live in `core/templates` and utility functions in `core/utils`. The
+example projects inside `projects/` demonstrate how a YAML configuration drives
+the entire workflow.
