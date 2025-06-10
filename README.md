@@ -43,7 +43,6 @@ make build PROJECT=quick-demo
 3. Execute the build using `make build PROJECT=<name>`.
 4. Generated artifacts appear in `output/` within the project.
 
-
 ## Pipeline Overview
 
 See [EXPLAINER.md](EXPLAINER.md) for a full walkthrough of how the pipeline works.
