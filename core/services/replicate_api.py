@@ -15,7 +15,7 @@ except ModuleNotFoundError:  # pragma: no cover - optional dependency
     replicate = None
 
 
-def render_video(storyboard: List[str], voice_path: str, config: dict) -> str:
+def render_video(prompts: List[str], voice_path: str, config: dict) -> str:
     """Render a video using Replicate if available."""
 
     out_dir = Path(config.get("output_dir", "output"))
@@ -27,7 +27,7 @@ def render_video(storyboard: List[str], voice_path: str, config: dict) -> str:
         video_file.write_text("synthetic video")
         return str(video_file)
 
-    prompt = "\n".join(storyboard)
+    prompt = "\n".join(prompts)
     model_name = config.get("video_model", "minimax/video-01")
 
     try:

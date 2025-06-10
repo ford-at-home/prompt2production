@@ -1,24 +1,10 @@
-# Quick demo project for testing the pipeline
-project_name: "Quick Demo"
-topic: "Introduction to IAM (Identity and Access Management)"
-duration_seconds: 45
-words_per_minute: 120
-output_dir: "output"
-
-# API Configuration
-video_model: "stability-ai/stable-video-diffusion:3f0457e4619daac51203dedb472816fd4af51f3149fa7a9e0b5ffcf1b8172438"
-voice_model: "eleven_multilingual_v2"
-
-# Content Configuration
-target_audience: "Technical professionals new to AWS"
-tone: "Professional and educational"
-style: "Clear and concise explanations with practical examples"
-
-# Scene Configuration
-num_scenes: 9
-scene_duration_seconds: 5
-
-# Advanced Settings
-enable_narrative_flow: true
-enable_context_aware_prompts: true
-save_individual_clips: true 
+project_name: "quick-demo"
+technical_topic: "Prompt2Production Overview"
+metaphor_world: "Toy factory"
+narrator_style: "Friendly"
+scene_count: 3
+tone: "Playful"
+voice_model: "ElevenLabs"
+video_model: "minimax/video-01"
+deployment:
+  s3_bucket: "quick-demo"
