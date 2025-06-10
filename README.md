@@ -27,42 +27,41 @@ Use it for:
 
 The `projects/iam-possible` folder shows a complete run of the pipeline. It presents AWS Identity and Access Management as a Tarantino-style nightclub heist narrated by a cocky hacker with Samuel L. Jackson flair. Running this project generates a script, storyboard, and timing matrix, then renders a final voiceover and video using services like ElevenLabs and Sora. All produced assets are uploaded to a rate-limited S3 bucket.
 
+## Quick Demo
+
+For a minimal run of the pipeline check out `projects/quick-demo`. It renders
+three playful scenes explaining the workflow. Run it with:
+
+```bash
+make build PROJECT=quick-demo
+```
+
+
 ## Pipeline Overview
 
 See [EXPLAINER.md](EXPLAINER.md) for a full walkthrough of how the pipeline works.
-
-This repository contains lightweight stubs for each step so you can see how the
-pieces fit together before plugging in real API keys and logic.
-
-The `projects/iam-possible` folder shows a complete run of the pipeline. It
-presents AWS Identity and Access Management as a Tarantino-style nightclub
-heist narrated by a cocky hacker with Samuel L. Jackson flair. Running this
-project generates a script, storyboard, and timing matrix, then renders a final
-voiceover and video using services like ElevenLabs and Sora. All produced
-assets are uploaded to a rate-limited S3 bucket.
-
-## Pipeline Overview
-
 1. **Define your project** in a YAML file (see `projects/iam-possible/PROMPT_INPUTS.yaml`).
 2. **Run the pipeline**:
 
    ```bash
    make build PROJECT=iam-possible
-   python -m cli.build_project path/to/PROMPT_INPUTS.yaml
    ```
-   
 3. `scene_builder` uses an LLM to draft each scene's narration.
 4. `storyboard_gen` converts narration into visual prompts.
 5. `timing_chain` estimates how long each line will take.
 6. `narrator_voice_gen` calls ElevenLabs to create an audio track.
-7. `replicate_api` (or Sora) renders the final video using the storyboard and audio.
-8. `s3_deployer` uploads the assets so they can be downloaded or shared.
+7. `video_prompt_gen` transforms each storyboard line into a prompt for the video model.
+8. `replicate_api` (or Sora) renders the raw footage.
+9. `video_composer` muxes the voice track with the footage.
+10. `s3_deployer` uploads the assets so they can be downloaded or shared.
 
 This repository contains lightweight stubs for each step so you can see how the pieces fit together before plugging in real API keys and logic.
 
 ## Configuration
 
 The pipeline expects a few environment variables so it can connect to external services:
+
+Copy `env.example` to `.env` and provide your credentials.
 
 - `ELEVENLABS_API_KEY` – used for voice synthesis.
 - `REPLICATE_API_TOKEN` – required for video generation with Replicate.

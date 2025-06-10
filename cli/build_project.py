@@ -1,7 +1,6 @@
 """CLI entry point for running a project through the pipeline."""
 
 import argparse
-import json
 from pathlib import Path
 
 try:
@@ -14,6 +13,7 @@ from core.chains.storyboard_gen import generate_storyboard
 from core.chains.timing_chain import estimate_timing
 from core.chains.narrator_voice_gen import build_voiceover
 from core.chains.video_prompt_gen import generate_video_prompts
+from core.services.replicate_api import render_video
 from core.services.video_composer import compose_video
 from core.services.s3_deployer import deploy
 
@@ -30,48 +30,29 @@ def build_project(config_path: str) -> None:
     output_dir = Path(config.get("output_dir", "output"))
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    print("🚀 Starting prompt2production pipeline...")
-    
-    # Generate script
-    print("📝 Generating script...")
-    script_lines = generate_script(config)
-    
-    # Generate storyboard
-    print("🎨 Generating storyboard...")
-    storyboard = generate_storyboard(script_lines, config)
-    
-    # Generate video prompts
-    print("🎬 Generating video prompts...")
-    video_prompts = generate_video_prompts(script_lines, storyboard, config)
-    
-    # Estimate timing
-    print("⏱️ Estimating timing...")
-    timings = estimate_timing(script_lines, config.get("words_per_minute", 120))
-    
-    # Generate voiceover
-    print("🎤 Generating voiceover...")
-    voice_path = build_voiceover(script_lines, config)
-    
-    # Generate and compose video
-    print("🎥 Generating and composing video...")
-    video_path = compose_video(video_prompts, voice_path, timings, config)
-    
-    # Save intermediate files
-    print("💾 Saving intermediate files...")
-    (output_dir / "script.json").write_text(json.dumps({"lines": script_lines}, indent=2))
-    (output_dir / "storyboard.json").write_text(json.dumps({"scenes": storyboard}, indent=2))
-    (output_dir / "timing.json").write_text(json.dumps({"timings": timings}, indent=2))
-    (output_dir / "voiceover.json").write_text(json.dumps({"voice_path": voice_path}, indent=2))
-    
-    # Deploy if configured
-    if config.get("deploy_to_s3", False):
-        print("☁️ Deploying to S3...")
-        deploy(voice_path, config)
-        deploy(video_path, config)
+    script = generate_script(config)
+    storyboard = generate_storyboard(script, config)
+    video_prompts = generate_video_prompts(storyboard, config)
+    timings = estimate_timing(script, config.get("words_per_minute", 120))
 
-    print("✅ Pipeline complete! Artifacts generated in", output_dir)
-    print(f"📁 Final video: {video_path}")
-    print(f"🎵 Final audio: {voice_path}")
+    (output_dir / "SCRIPT.md").write_text("\n".join(script))
+    (output_dir / "STORYBOARD.md").write_text("\n".join(storyboard))
+    timing_lines = [f"{t['seconds']:.2f}s: {t['line']}" for t in timings]
+    (output_dir / "TIMED_SCRIPT.md").write_text("\n".join(timing_lines))
+
+    voice_path = build_voiceover(script, config)
+    video_path = render_video(video_prompts, voice_path, config)
+    final_video = compose_video(video_path, voice_path, output_dir / "final_composed.mp4")
+
+    (output_dir / "transcript.txt").write_text("\n".join(script))
+    (output_dir / "render_notes.md").write_text(
+        f"Video model: {config.get('video_model', 'unknown')}\n"
+    )
+
+    deploy(voice_path, config)
+    deploy(final_video, config)
+
+    print("Pipeline complete. Artifacts generated in", output_dir)
 
 
 def main() -> None:
