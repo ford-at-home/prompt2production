@@ -66,6 +66,6 @@ Copy `env.example` to `.env` and provide your credentials.
 - `ELEVENLABS_API_KEY` – used for voice synthesis.
 - `REPLICATE_API_TOKEN` – required for video generation with Replicate.
 
-By default the video step calls the `minimax/video-01` model on Replicate. If the `replicate` package is not installed or the API call fails, a placeholder file is created so you can test the rest of the pipeline offline. Text-to-text prompts use AWS Bedrock's Nova model, which reads credentials from your `~/.aws/credentials` file.
+By default the video step calls the `google/veo-3` model on Replicate. If the `replicate` package is not installed or the API call fails, a placeholder file is created so you can test the rest of the pipeline offline. Text-to-text prompts use AWS Bedrock's Nova model, which reads credentials from your `~/.aws/credentials` file.
 This repository contains lightweight stubs for each step so you can see how the
 pieces fit together before plugging in real API keys and logic.

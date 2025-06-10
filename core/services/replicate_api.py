@@ -1,9 +1,9 @@
 """Video generation wrapper.
 
 This module optionally integrates with Replicate's API to render a video using
-the ``minimax/video-01`` model. If the ``replicate`` package is not available
-or the API call fails, a placeholder file is written so the rest of the
-pipeline can run without network access.
+the ``google/veo-3`` model. If the ``replicate`` package is not available or the
+API call fails, a placeholder file is written so the rest of the pipeline can
+run without network access.
 """
 
 from pathlib import Path
@@ -28,10 +28,15 @@ def render_video(prompts: List[str], voice_path: str, config: dict) -> str:
         return str(video_file)
 
     prompt = "\n".join(prompts)
-    model_name = config.get("video_model", "minimax/video-01")
+    model_name = config.get("video_model", "google/veo-3")
+
+    inputs = {"prompt": prompt}
+    seed = config.get("seed")
+    if seed is not None:
+        inputs["seed"] = seed
 
     try:
-        output_url = replicate.run(model_name, input={"prompt": prompt})
+        output_url = replicate.run(model_name, input=inputs)
     except Exception:  # pragma: no cover - network errors ignored
         video_file.write_text("synthetic video")
         return str(video_file)
