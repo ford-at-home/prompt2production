@@ -1,0 +1,13 @@
+{# Video prompt template for generating concrete, actionable video prompts #}
+
+{%- if context %}
+Context: {{ context }}
+{%- endif %}
+
+Scene {{ scene }}: {{ script_line }}
+
+Video Prompt: {{ prompt }}
+
+{%- if additional_notes %}
+Notes: {{ additional_notes }}
+{%- endif %} 

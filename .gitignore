@@ -172,3 +172,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Video and audio output files
+output/*.mp4
+output/*.mp3
+output/clips/
+output/final_video.mp4
+output/final_voiceover.mp3

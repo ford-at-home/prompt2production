@@ -1,4 +1,6 @@
-pyyaml
-jinja2
-boto3
-replicate
+boto3>=1.26.0
+elevenlabs>=0.2.24
+replicate>=0.8.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+requests>=2.28.0
