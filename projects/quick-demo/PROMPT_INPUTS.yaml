@@ -5,6 +5,6 @@ narrator_style: "Friendly"
 scene_count: 3
 tone: "Playful"
 voice_model: "ElevenLabs"
-video_model: "minimax/video-01"
+video_model: "google/veo-3"
 deployment:
   s3_bucket: "quick-demo"
