@@ -1,85 +1,164 @@
 # prompt2production
 
-**prompt2production** is a generative media pipeline for turning technical topics into cinematic, metaphor-driven explainers.
+Create beautiful 45-second explainer videos with AI. Just tell it what to explain.
 
-Install dependencies with:
-
-```bash
-pip install -r requirements.txt
-```
-
-It uses:
-- LLMs for scripting (via Bedrock/Nova)
-- Voice cloning APIs (like ElevenLabs)
-- Video/image generation (like Sora, Replicate, Runway)
-- A structured prompt chaining system to stitch everything together
-
-🎬 Input: YAML file describing a project
-📦 Output: Fully formed narrative, storyboard, timing, and downloadable media artifacts
-
-Use it for:
-- Security training
-- DevRel content
-- Internal onboarding
-- Just plain fun
-
-## Example: IAM-POSSIBLE
-
-The `projects/iam-possible` folder shows a complete run of the pipeline. It presents AWS Identity and Access Management as a Tarantino-style nightclub heist narrated by a cocky hacker with Samuel L. Jackson flair. Running this project generates a script, storyboard, and timing matrix, then renders a final voiceover and video using services like ElevenLabs and Sora. All produced assets are uploaded to a rate-limited S3 bucket.
-
-## Quick Demo
-
-For a minimal run of the pipeline check out `projects/quick-demo`. It renders
-three playful scenes explaining the workflow. Run it with:
+## 🚀 Quick Start
 
 ```bash
-make build PROJECT=quick-demo
+# Setup (one time)
+git clone https://github.com/yourusername/prompt2production.git
+cd prompt2production
+
+# Create a video (handles setup automatically)
+make video
+# Then type your topic when prompted!
 ```
 
-## Running the Pipeline
+**That's it!** In ~2 minutes you'll have a professional explainer video with:
+- 🎙️ Smooth 45-second narration explaining the topic clearly
+- 🎬 9 perfectly-timed 5-second video scenes
+- 🔊 Professional AI voice narration
+- 🎵 Optional background music that matches your topic
+- ✨ Everything synchronized and ready to share
 
-1. Copy `env.example` to `.env` and populate your API keys.
-2. Select a project directory under `projects/`.
-3. Execute the build using `make build PROJECT=<name>`.
-4. Generated artifacts appear in `output/` within the project.
+## 🎯 How It Works
 
-## Pipeline Overview
+1. **You provide**: "how docker technology works"
+2. **AI writes**: A clear, flowing 45-second explanation
+3. **Smart chunking**: Breaks narration into 9 natural segments (~5 seconds each)
+4. **Visual generation**: Creates a video scene for each segment
+5. **Perfect sync**: Combines everything into one smooth video
 
-See [EXPLAINER.md](EXPLAINER.md) for a full walkthrough of how the pipeline works.
-1. **Define your project** in a YAML file (see `projects/iam-possible/PROMPT_INPUTS.yaml`).
-2. **Run the pipeline**:
+## 📺 Example Videos You Can Make
 
-   ```bash
-   make build PROJECT=iam-possible
-   ```
-3. `scene_builder` uses an LLM to draft each scene's narration.
-4. `storyboard_gen` converts narration into visual prompts.
-5. `timing_chain` estimates how long each line will take.
-6. `narrator_voice_gen` calls ElevenLabs to create an audio track.
-7. `video_prompt_gen` transforms each storyboard line into a prompt for the video model.
-8. `replicate_api` (or Sora) renders the raw footage.
-9. `video_composer` muxes the voice track with the footage.
-10. `s3_deployer` uploads the assets so they can be downloaded or shared.
+```bash
+python create_video.py "how machine learning works"
+python create_video.py "what is cryptocurrency"
+python create_video.py "how the internet works"
+python create_video.py "what is cloud computing"
+python create_video.py "how vaccines work"
+```
 
-This repository contains lightweight stubs for each step so you can see how the pieces fit together before plugging in real API keys and logic.
+## 🎨 Customization Options
 
-## Configuration
+```bash
+# Change video length (default: 45 seconds)
+python create_video.py "how wifi works" --duration 30
 
-The pipeline expects a few environment variables so it can connect to external services:
+# Change segment length (default: 5 seconds)  
+python create_video.py "how wifi works" --segment 3
 
-Copy `env.example` to `.env` and provide your credentials.
+# Change voice style
+python create_video.py "how wifi works" --voice "british-female"
 
-- `ELEVENLABS_API_KEY` – used for voice synthesis.
-- `REPLICATE_API_TOKEN` – required for video generation with Replicate.
+# Add a metaphor for better visuals
+python create_video.py "how wifi works" --metaphor "radio station"
 
-By default the video step calls the `google/veo-3` model on Replicate. If the `replicate` package is not installed or the API call fails, a placeholder file is created so you can test the rest of the pipeline offline. Text-to-text prompts use AWS Bedrock's Nova model, which reads credentials from your `~/.aws/credentials` file.
-This repository contains lightweight stubs for each step so you can see how the
-pieces fit together before plugging in real API keys and logic.
+# Add background music
+python create_video.py "how the brain works" --music
+```
 
-## Under the Hood
+## 📋 Output Structure
 
-The CLI lives in `cli/build_project.py`. Each stage of the pipeline is
-implemented as a small module under `core/chains` or `core/services`. Prompt
-templates live in `core/templates` and utility functions in `core/utils`. The
-example projects inside `projects/` demonstrate how a YAML configuration drives
-the entire workflow.
+Your video will be broken down like this:
+
+```
+[0:00-0:05] "Docker is a technology that packages applications..."
+[0:05-0:10] "Think of it like shipping containers for software..."
+[0:10-0:15] "Each container includes everything the app needs..."
+[0:15-0:20] "This makes applications portable across systems..."
+[0:20-0:25] "Developers can build once and run anywhere..."
+[0:25-0:30] "Docker uses layers to make containers efficient..."
+[0:30-0:35] "Multiple containers can share the same base..."
+[0:35-0:40] "This revolutionized how we deploy software..."
+[0:40-0:45] "Making cloud computing more accessible to everyone."
+```
+
+## 🔧 Installation
+
+### Requirements
+- Python 3.8+
+- FFmpeg (for video assembly)
+- API keys for AI services (optional - works in demo mode without them)
+
+### API Setup (Optional)
+
+For production-quality videos, you'll need:
+
+1. **API Keys** - Add to `.env` file:
+```bash
+cp env.example .env
+# Edit .env with your keys:
+# - ELEVENLABS_API_KEY (for voices)
+# - REPLICATE_API_TOKEN (for video)
+```
+
+2. **AWS Credentials** - Add to `~/.aws/credentials`:
+```ini
+[personal]
+aws_access_key_id = YOUR_ACCESS_KEY
+aws_secret_access_key = YOUR_SECRET_KEY
+```
+
+## 🏗️ Pipeline Architecture
+
+```
+Input: "how docker works"
+    ↓
+1. Script Generation (45 seconds)
+    ↓
+2. Smart Segmentation (9 chunks)
+    ↓
+3. Visual Prompt Generation
+    ↓
+4. Parallel Video Generation (9 scenes)
+    ↓
+5. Voice Synthesis (with timing)
+    ↓
+6. Video Assembly & Sync
+    ↓
+Output: final_video.mp4
+```
+
+## 🎬 Advanced Features
+
+### Custom Timing
+```python
+# config.yaml
+video:
+  total_duration: 45  # Total video length in seconds
+  segment_duration: 5  # Each scene length in seconds
+  segments: 9         # Number of scenes
+```
+
+### Quality Settings
+```python
+# config.yaml
+quality:
+  video_resolution: "1080p"
+  voice_quality: "premium"
+  video_style: "cinematic"
+```
+
+## 📚 Documentation
+
+- **[Quick Start Guide](QUICKSTART.md)** - Get started in 2 minutes
+- **[Examples](EXAMPLES.md)** - See what you can create
+- **[Configuration](CONFIGURATION.md)** - Customize everything
+- **[Data Flow](DATA_FLOW.md)** - How it works under the hood
+
+## 🤝 Contributing
+
+We'd love your help making this better:
+- Improve script generation prompts
+- Add new voice styles
+- Enhance video scene transitions
+- Create topic templates
+
+## 📝 License
+
+MIT - Use it for anything!
+
+---
+
+**Just describe what you want explained.** The AI handles the rest. 🎥✨

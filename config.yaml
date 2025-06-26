@@ -1,0 +1,118 @@
+# Prompt2Production Configuration
+# This file contains all configurable parameters for the pipeline
+
+# API Configuration
+api:
+  # AWS Bedrock Configuration
+  bedrock:
+    profile: "personal"  # AWS profile to use from ~/.aws/credentials
+    model: "anthropic.claude-3-haiku-20240307-v1:0"  # Default LLM model
+    region: "us-east-1"
+    
+  # ElevenLabs Configuration  
+  elevenlabs:
+    api_key_env: "ELEVENLABS_API_KEY"  # Environment variable name
+    voice_id: "21m00Tcm4TlvDq8ikWAM"  # Default voice ID
+    model_id: "eleven_monolingual_v1"  # TTS model
+    
+  # Replicate Configuration
+  replicate:
+    api_token_env: "REPLICATE_API_TOKEN"  # Environment variable name
+    video_model: "tencent/hunyuan-video"  # State-of-the-art open-source model
+    # Alternative cutting-edge models:
+    # video_model: "minimax/video-01"  # MiniMax Hailuo - 6s high-quality videos
+    # video_model: "genmo/mochi-1-preview"  # Mochi-1 - 10B param model
+    # video_model: "alibaba/wan-2.1"  # Latest Alibaba model
+    # video_model: "google/veo-2"  # Google's latest (if available)
+    # video_model: "haiper/haiper-2.0"  # Fast generation, good coherence
+    
+  # Music Generation Configuration
+  music:
+    enabled: true  # Generate background music
+    model: "meta/musicgen"  # MusicGen by Meta
+    model_version: "melody"  # Options: "melody", "large"
+    duration: 45  # Match video duration
+    # Alternative models:
+    # model: "sakemin/musicongen"  # MusicGen with chord control
+    # model: "mtg/musicgen-chord"  # Chord-based generation
+    
+  # S3 Configuration
+  s3:
+    default_bucket: "prompt2production-output"
+    region: "us-east-1"
+    max_requests: 1000
+    download_enabled: true
+
+# Pipeline Configuration
+pipeline:
+  # Video Structure
+  video:
+    total_duration: 45      # Total video length in seconds
+    segment_duration: 5     # Each scene length in seconds
+    segments: 9            # Number of scenes (calculated from total/segment)
+    
+  # Timing Settings
+  timing:
+    words_per_minute: 150   # Speaking pace (150 is natural)
+    buffer_percentage: 0.9  # Use 90% of segment time for safety
+    
+  # Script Generation
+  script:
+    style: "clear and engaging"  # How to write the narration
+    complexity: "ELI5"          # Explain Like I'm 5
+    flow: "sequential"          # How ideas connect
+    
+  # Default Values (used when not specified in project YAML)
+  defaults:
+    technical_topic: "demo"
+    metaphor_world: null    # No metaphor by default
+    narrator_style: "friendly and clear"
+    tone: "educational"
+    voice_style: "american-male"
+    
+  # Output Configuration
+  output:
+    directory: "output"  # Base output directory
+    filenames:
+      script: "SCRIPT.md"
+      storyboard: "STORYBOARD.md"
+      timed_script: "TIMED_SCRIPT.md"
+      transcript: "transcript.txt"
+      render_notes: "render_notes.md"
+      voiceover: "final_voiceover.mp3"
+      video: "final_video.mp4"
+      composed_video: "final_composed.mp4"
+      
+  # Video Composition Settings (FFmpeg)
+  video_composition:
+    overwrite: true  # -y flag
+    video_codec: "copy"  # -c:v
+    audio_codec: "aac"  # -c:a
+    additional_flags: []  # Any extra FFmpeg flags
+    
+# Template Configuration
+templates:
+  directory: "core/templates"
+  files:
+    voiceover_prompt: "vo_prompt.jinja"
+    visual_prompt: "visual_prompt.jinja"
+    video_prompt: "video_prompt.jinja"
+    
+# Placeholder Content (for stubbed implementations)
+placeholders:
+  llm_output: "[LLM output for: {prompt}...]"
+  synthetic_audio: "synthetic audio"
+  synthetic_video: "synthetic video"
+  composed_video: "synthetic composed video"
+  
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+# Development Mode
+development:
+  use_stubs: true  # Use stubbed implementations instead of real APIs
+  stub_delay: 0.5  # Artificial delay for stubbed operations (seconds)
+  save_prompts: true  # Save all prompts sent to APIs for debugging
+  prompt_directory: "debug/prompts"

@@ -174,4 +174,5 @@ cython_debug/
 .pypirc
 *.mp4
 output/
+logs/
 
