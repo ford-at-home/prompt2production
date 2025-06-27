@@ -76,8 +76,22 @@ def bedrock_complete(prompt: str, config: dict) -> str:
         bedrock = session.client('bedrock-runtime', region_name=region)
         
         # Prepare request based on model type
-        if 'anthropic' in model_id:
-            # Claude models
+        if 'anthropic' in model_id and 'claude-3' in model_id:
+            # Claude 3 models use Messages API
+            request_body = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 4000,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            }
+        elif 'anthropic' in model_id:
+            # Claude 2 models
             request_body = {
                 "prompt": f"\n\nHuman: {prompt}\n\nAssistant:",
                 "max_tokens_to_sample": 4000,
@@ -105,9 +119,15 @@ def bedrock_complete(prompt: str, config: dict) -> str:
         response_body = json.loads(response['body'].read())
         
         # Handle different model response formats
-        if 'content' in response_body and isinstance(response_body['content'], list):
-            # Claude 3 format
-            result = response_body['content'][0]['text']
+        if 'content' in response_body:
+            if isinstance(response_body['content'], list):
+                # Claude 3 Messages API format
+                result = response_body['content'][0]['text']
+            elif isinstance(response_body['content'], str):
+                # Alternative format
+                result = response_body['content']
+            else:
+                result = str(response_body['content'])
         elif 'completion' in response_body:
             # Claude 2 format
             result = response_body['completion']

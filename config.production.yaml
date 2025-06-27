@@ -1,0 +1,81 @@
+# Production Configuration - Best Quality Models
+# This configuration uses the highest quality models for final production
+
+# API Configuration
+api:
+  # AWS Bedrock Configuration
+  bedrock:
+    profile: "personal"
+    model: "anthropic.claude-3-haiku-20240307-v1:0"  # Can upgrade to Sonnet/Opus
+    region: "us-east-1"
+    
+  # ElevenLabs Configuration
+  elevenlabs:
+    api_key_env: "ELEVENLABS_API_KEY"
+    voice_id: "21m00Tcm4TlvDq8ikWAM"
+    model_id: "eleven_turbo_v2"  # Highest quality voice model
+    
+  # Replicate Configuration - BEST QUALITY MODELS
+  replicate:
+    api_token_env: "REPLICATE_API_TOKEN"
+    
+    # 🏆 PRODUCTION MODEL: Google Veo 3 - State of the art
+    video_model: "google/veo-3"
+    
+    # Alternative premium models:
+    # video_model: "tencent/hunyuan-video"  # Best open-source
+    # video_model: "minimax/video-01"  # Exceptional realism
+    # video_model: "kwaivgi/kling-v2.1"  # Highest resolution
+    
+  # Music Generation Configuration
+  music:
+    enabled: true  # Enable high-quality background music
+    model: "riffusion/riffusion:8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05"
+    
+  # S3 Configuration
+  s3:
+    default_bucket: "prompt2production-output"
+    region: "us-east-1"
+
+# Pipeline Configuration - Optimized for Quality
+pipeline:
+  # Video Structure
+  video:
+    total_duration: 45      # Full length videos
+    segment_duration: 5     # 5 second segments for better continuity
+    segments: 9            # More segments for detailed content
+    
+  # Timing Settings
+  timing:
+    words_per_minute: 150
+    buffer_percentage: 0.9
+    
+  # Script Generation
+  script:
+    style: "professional and engaging"
+    complexity: "accessible yet informative"
+    flow: "narrative arc"
+    
+  # Output Configuration
+  output:
+    directory: "output"
+    
+  # Video Composition Settings (FFmpeg)
+  video_composition:
+    overwrite: true
+    video_codec: "libx264"  # Better quality encoding
+    audio_codec: "aac"
+    additional_flags: ["-preset", "slow", "-crf", "18"]  # High quality encoding
+    
+# Production Settings
+development:
+  use_stubs: false  # Always use real APIs
+  stub_delay: 0
+  save_prompts: true  # Keep for debugging
+  prompt_directory: "debug/prompts_production"
+  
+# Retry Configuration
+retry:
+  max_attempts: 3  # Retry failed segments
+  delay_seconds: 30  # Wait between retries
+  timeout_minutes: 10  # Timeout per segment

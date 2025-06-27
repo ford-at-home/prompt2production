@@ -1,0 +1,11 @@
+Write a 45-second narration script explaining "how does docker work".
+
+Requirements:
+- Exactly 112 words (for 150 words per minute pace)
+- Clear, flowing explanation that builds understanding
+- Natural progression from basic to deeper concepts
+- Engaging and easy to understand (ELI5 level)
+- No jargon unless immediately explained
+- Must work as continuous narration (no scene breaks)
+
+Write ONLY the narration text, no formatting or metadata.

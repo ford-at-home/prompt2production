@@ -2,3 +2,5 @@ pyyaml
 jinja2
 boto3
 replicate
+python-dotenv
+requests

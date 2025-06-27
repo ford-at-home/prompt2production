@@ -1,13 +1,20 @@
 """Music generation for video soundtracks using MusicGen."""
 
+import os
 from pathlib import Path
 from typing import Dict
 from core.utils.config import config as global_config
+from core.utils.logger import setup_logger, log_api_call
 
 try:
     import replicate
 except ImportError:
     replicate = None
+    
+try:
+    import requests
+except ImportError:
+    requests = None
 
 
 def generate_background_music(topic: str, duration: int, merged_config: Dict) -> str:
@@ -21,6 +28,8 @@ def generate_background_music(topic: str, duration: int, merged_config: Dict) ->
     Returns:
         Path to generated music file
     """
+    logger = setup_logger(__name__)
+    
     if not global_config.get('api.music.enabled', True):
         return None
         
@@ -28,53 +37,99 @@ def generate_background_music(topic: str, duration: int, merged_config: Dict) ->
     music_path = out_dir / "background_music.mp3"
     
     # Check if we're in development mode
-    if global_config.get('development.use_stubs', True) or replicate is None:
+    if global_config.get('development.use_stubs', True) or replicate is None or requests is None:
         # Create placeholder
         music_path.write_text(f"Background music for {topic} ({duration}s)")
+        log_api_call(logger, "Replicate", "music generation (stub)", 
+                    {"duration": duration}, stub_mode=True)
         return str(music_path)
+    
+    # Get API token from environment
+    api_token_env = global_config.get('api.replicate.api_token_env', 'REPLICATE_API_TOKEN')
+    api_token = os.environ.get(api_token_env)
+    
+    if not api_token:
+        logger.error(f"Replicate API token not found in environment variable {api_token_env}")
+        return None
     
     # Generate music prompt based on topic
     music_prompt = create_music_prompt(topic, merged_config)
     
     # Get model configuration
-    model_name = global_config.get('api.music.model', 'meta/musicgen')
-    model_version = global_config.get('api.music.model_version', 'melody')
+    model_name = global_config.get('api.music.model', 'riffusion/riffusion')
     
     try:
-        # Get API token
-        api_token = global_config.get('api.replicate.api_token')
-        if api_token:
-            replicate.api_token = api_token
+        # Configure Replicate client
+        replicate.Client(api_token=api_token)
         
-        # Generate music
-        if model_name == "meta/musicgen":
+        # Log API call
+        log_api_call(logger, "Replicate", "music generation", 
+                    {"model": model_name, "duration": duration, "prompt_length": len(music_prompt)}, 
+                    stub_mode=False)
+        
+        # Generate music based on model
+        if "riffusion" in model_name:
+            inputs = {
+                "prompt_a": music_prompt,
+                "denoising": 0.75,
+                "prompt_strength": 0.5,
+                "alpha": 0.5,
+                "num_inference_steps": 50,
+                "seed_image_id": "vibes"
+            }
+        elif "musicgen" in model_name:
             inputs = {
                 "prompt": music_prompt,
                 "duration": duration,
-                "model_version": model_version,
-                "format": "mp3",
+                "model_version": "melody",
+                "output_format": "mp3",
                 "temperature": 1.0,
                 "top_k": 250,
-                "top_p": 0.95,
-                "seed": merged_config.get('seed', -1)
+                "top_p": 0.0,
+                "classifier_free_guidance": 3.0,
+                "seed": -1
             }
         else:
-            # Generic inputs for other models
+            # Generic inputs
             inputs = {
                 "prompt": music_prompt,
                 "duration": duration
             }
         
-        output_url = replicate.run(model_name, input=inputs)
+        # Run the model
+        output = replicate.run(model_name, input=inputs)
         
-        # TODO: Download actual audio file
-        music_path.write_text(str(output_url))
+        # Handle different output formats
+        output_url = None
+        
+        if hasattr(output, 'read'):
+            # It's a file-like object from Replicate
+            music_path.write_bytes(output.read())
+            logger.info(f"Successfully generated music and saved to {music_path}")
+            return str(music_path)
+        elif isinstance(output, str):
+            output_url = output
+        elif isinstance(output, dict) and 'audio' in output:
+            output_url = output['audio']
+        elif isinstance(output, list) and len(output) > 0:
+            output_url = output[0]
+        else:
+            output_url = str(output)
+        
+        # Download the audio file if we have a URL
+        if output_url and isinstance(output_url, str) and output_url.startswith('http'):
+            response = requests.get(output_url, timeout=60)
+            response.raise_for_status()
+            music_path.write_bytes(response.content)
+            logger.info(f"Successfully generated music and saved to {music_path}")
+        else:
+            logger.error(f"Could not handle output from Replicate: {type(output)}")
+            return None
         
         return str(music_path)
         
     except Exception as e:
-        print(f"Warning: Failed to generate music: {e}")
-        music_path.write_text("Error generating music")
+        logger.error(f"Failed to generate music: {type(e).__name__}: {str(e)}")
         return None
 
 

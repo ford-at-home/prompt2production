@@ -3,6 +3,26 @@
 import argparse
 from pathlib import Path
 import time
+import os
+import sys
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    # Find .env file in project root
+    env_path = Path(__file__).parent.parent / '.env'
+    if env_path.exists():
+        load_dotenv(env_path)
+except ImportError:
+    # dotenv not installed, try to load manually
+    env_path = Path(__file__).parent.parent / '.env'
+    if env_path.exists():
+        with open(env_path) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key.strip()] = value.strip()
 
 try:  # pragma: no cover - optional dependency
     import yaml
@@ -370,7 +390,44 @@ def main() -> None:
         default=False,
         help="Disable background music"
     )
+    parser.add_argument(
+        "--test",
+        action="store_true",
+        default=False,
+        help="Use test mode (fast/cheap models for development)"
+    )
+    parser.add_argument(
+        "--production",
+        action="store_true",
+        default=False,
+        help="Use production mode (best quality models)"
+    )
     args = parser.parse_args()
+    
+    # Handle mode switching
+    if args.test and args.production:
+        print("❌ Error: Cannot use both --test and --production flags")
+        sys.exit(1)
+    
+    if args.test:
+        # Load test configuration
+        import shutil
+        config_path = Path(__file__).parent.parent / "config.test.yaml"
+        if config_path.exists():
+            shutil.copy(config_path, Path(__file__).parent.parent / "config.yaml")
+            print("🚀 Using TEST MODE (fast models)")
+            # Override duration for test mode if not specified
+            if args.duration == 45:  # Default value
+                args.duration = 10
+                print("   Duration set to 10s for testing")
+    elif args.production:
+        # Load production configuration
+        import shutil
+        config_path = Path(__file__).parent.parent / "config.production.yaml"
+        if config_path.exists():
+            shutil.copy(config_path, Path(__file__).parent.parent / "config.yaml")
+            print("🏆 Using PRODUCTION MODE (best quality)")
+            print("⚠️  This will take 30-45 minutes and cost more")
     
     # Create configuration from arguments
     project_name = f"video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
