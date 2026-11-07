@@ -1,0 +1,16 @@
+Create a 5-second video scene prompt.
+
+Narration for this segment: ""
+
+This is scene 2 of 9.
+Overall topic: how does docker work
+Visual theme: [LLM output for: Define a consistent visual style for a video expla...]
+Style: Literal/educational
+
+Requirements:
+- Directly illustrate what's being said in the narration
+- Maintain visual continuity with the theme
+- Include motion/animation appropriate for 5 seconds
+- Be specific about camera angles, movements, and key visual elements
+
+Write a concise, specific prompt for video generation:

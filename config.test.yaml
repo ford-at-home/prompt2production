@@ -1,0 +1,66 @@
+# Test Mode Configuration - Fast & Cheap Models for Development
+# This configuration uses faster, cheaper models for testing functionality
+
+# API Configuration
+api:
+  # AWS Bedrock Configuration (Same as production)
+  bedrock:
+    profile: "personal"
+    model: "anthropic.claude-3-haiku-20240307-v1:0"  # Haiku is cheaper/faster
+    region: "us-east-1"
+    
+  # ElevenLabs Configuration (Same as production)
+  elevenlabs:
+    api_key_env: "ELEVENLABS_API_KEY"
+    voice_id: "21m00Tcm4TlvDq8ikWAM"
+    model_id: "eleven_monolingual_v1"
+    
+  # Replicate Configuration - FAST MODELS
+  replicate:
+    api_token_env: "REPLICATE_API_TOKEN"
+    
+    # 🚀 FAST TEST MODEL: LTX-Video (30-60 seconds per segment)
+    video_model: "lightricks/ltx-video"
+    
+    # Alternative fast models:
+    # video_model: "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351"  # 1-2 min
+    # video_model: "deforum/deforum_stable_diffusion:e22e77495f2fb83c34d5fae2ad8ab63c0a87b6b573b6208e1535b23b89ea66d6"  # <1 min
+    
+  # Music Generation Configuration
+  music:
+    enabled: false  # Disable music for faster testing
+    
+  # S3 Configuration
+  s3:
+    default_bucket: "prompt2production-test"  # Use test bucket
+    region: "us-east-1"
+
+# Pipeline Configuration - Optimized for Speed
+pipeline:
+  # Video Structure - Shorter for testing
+  video:
+    total_duration: 10      # Only 10 seconds for testing
+    segment_duration: 5     # 5 second segments
+    segments: 2            # Just 2 segments
+    
+  # Timing Settings
+  timing:
+    words_per_minute: 150
+    buffer_percentage: 0.9
+    
+  # Script Generation
+  script:
+    style: "clear and engaging"
+    complexity: "ELI5"
+    flow: "sequential"
+    
+  # Output Configuration
+  output:
+    directory: "output_test"  # Separate test output directory
+    
+# Development Mode - Keep stubs available
+development:
+  use_stubs: false  # Use real APIs but with fast models
+  stub_delay: 0.1  # Minimal delay
+  save_prompts: true
+  prompt_directory: "debug/prompts_test"

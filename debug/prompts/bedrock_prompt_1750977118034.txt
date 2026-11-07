@@ -1,0 +1,13 @@
+Define a consistent visual style for a video explaining "how does docker work".
+
+The video will have 9 scenes, each 5 seconds long.
+Use clear, literal visuals.
+Tone: educational
+
+Describe:
+1. Overall visual style (realistic, animated, abstract, etc.)
+2. Color palette
+3. Key visual elements to repeat across scenes
+4. How to show progression/continuity
+
+Keep it brief and actionable.

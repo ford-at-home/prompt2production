@@ -1,0 +1,10 @@
+project_name: "quick-demo"
+technical_topic: "Prompt2Production Overview"
+metaphor_world: "Toy factory"
+narrator_style: "Friendly"
+scene_count: 3
+tone: "Playful"
+voice_model: "ElevenLabs"
+video_model: "google/veo-3"
+deployment:
+  s3_bucket: "quick-demo"
